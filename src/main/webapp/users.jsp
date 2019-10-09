@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-<h3><a href="index.html">Home</a></h3>
+<h1><a href="index.html">Home</a></h1>
 <hr>
 <h2>Users</h2>
 </body>

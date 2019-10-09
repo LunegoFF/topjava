@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-<h3><a href="index.html">Home</a></h3>
+<h1><a href="index.html">Home</a></h1>
 <hr>
 <h2>Meals</h2>
 
@@ -14,38 +14,34 @@
 <table border=1>
     <thead>
     <tr>
-        <th>ID</th>
         <th>Date/Time</th>
         <th>Description</th>
         <th>Calories</th>
-        <th>Excess</th>
         <th colspan="2"></th>
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${meals}" var="meal">
-        <tr>
-            <form name="updateForm" method="get">
-                <input type="hidden" name="action" value="update"/>
-                <td><input type="text" name="mealId" value="<c:out value="${meal.id}" />" /></td>
-                <td><input type="datetime-local" name="date" value="<c:out value="${meal.dateTime}" />" /></td>
-                <td><input type="text" name="description" value="<c:out value="${meal.description}" />" /></td>
-                <td><input type="text" name="calories" value="<c:out value="${meal.calories}" />" /></td>
-                <td><c:out value="${meal.excess}"/></td>
-                <td><button type="submit" formaction="/topjava/meals">Update</button></td>
+        <tr bgcolor=${meal.value.excess ? "red" : "green"}>
+            <form name="updateForm" method="post">
+                <input type="hidden" name="id" value="${meal.key}" />
+                <td><input type="datetime-local" name="date" value="${meal.value.dateTime}" /></td>
+                <td><input type="text" name="description" value="${meal.value.description}" /></td>
+                <td><input type="text" name="calories" value="${meal.value.calories}" /></td>
+                <td><input type="submit" value="Update" /></td>
             </form>
-
-                <td><button type="submit" onclick="location.href='/topjava/meals?action=delete&mealId=${meal.id}'">Delete</button></td>
+            <form name="deleteForm" method="get">
+                <input type="hidden" name="id" value="${meal.key}" />
+                <td><input type="submit" value="Delete"/></td>
+            </form>
         </tr>
     </c:forEach>
     </tbody>
 </table>
-<hr>
-<form method="POST" name="AddForm">
-    <label>ID : </label><input type="text" name="id" value="<c:out value="${meal.id}" />" /> <br />
-    <label>Date/Time : </label><input type="datetime-local" name="date" value="<c:out value="${meal.date}" />" /> <br />
-    <label>Description : </label><input type="text" name="description" value="<c:out value="${meal.description}" />" /> <br />
-    <label>Calories : </label><input type="text" name="calories" value="<c:out value="${meal.calories}" />" /> <br />
+<form name="AddForm" method="post">
+    <label>Date/Time : </label><input type="datetime-local" name="date" /><br />
+    <label>Description : </label><input type="text" name="description" /><br />
+    <label>Calories : </label><input type="text" name="calories" /><br />
     <input type="submit" value="Add" />
 </form>
 </body>
