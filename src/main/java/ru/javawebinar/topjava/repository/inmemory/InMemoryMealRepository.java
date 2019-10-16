@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
@@ -21,10 +22,6 @@ public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
-    private LocalDate startDate = LocalDate.MIN;
-    private LocalDate endDate = LocalDate.MAX;
-    private LocalTime startTime = LocalTime.MIN;
-    private LocalTime endTime = LocalTime.MAX;
 
     {
         MealsUtil.MEALS.forEach(meal -> this.save(meal, meal.getUserId()));
@@ -63,28 +60,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAllWithFilter(int userId, String startDate, String endDate, String startTime, String endTime) {
+    public Collection<Meal> getAllWithFilter(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAll with filter of user {}", userId);
-        if (!startDate.equals(""))
-            this.startDate = LocalDate.parse(startDate);
-        if (!endDate.equals(""))
-            this.endDate = LocalDate.parse(endDate);
-        if (!startTime.equals(""))
-            this.startTime = LocalTime.parse(startTime);
-        if (!endTime.equals(""))
-            this.endTime = LocalTime.parse(endTime);
-
-
         return repository.values()
                 .stream()
-                .peek(meal -> log.info("meal: {}", meal))
                 .filter(meal ->
                         userId == meal.getUserId() &&
-                        this.startDate.isBefore(meal.getDate()) &&
-                                this.endDate.isAfter(meal.getDate()) &&
-                                this.startTime.isBefore(meal.getTime()) &&
-                                this.endTime.isAfter(meal.getTime()))
-                .peek(meal -> log.info("meal: {}", meal))
+                        DateTimeUtil.isBetween(meal.getDate(), startDate, endDate)  &&
+                        DateTimeUtil.isBetween(meal.getTime(), startTime, endTime))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }

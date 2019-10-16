@@ -18,13 +18,14 @@
 </head>
 <body>
 <section>
-    <h3><a href="index.html">Home</a></h3>
+    <h3><a href="users.jsp">Switch user</a></h3>
     <hr/>
-    <h2>Meals</h2>
+    <jsp:useBean id="user" class="ru.javawebinar.topjava.web.SecurityUtil"/>
+    <h2>Meals of user <jsp:getProperty property="authUserId" name="user" /></h2>
     <a href="meals?action=create">Add Meal</a>
     <br>
     <table border="1" cellpadding="8" cellspacing="0">
-    <form action="meals" method="get">
+    <form action="meals" method="post">
         <thead>
         <input type="hidden" name="action" value="filter">
         <tr>

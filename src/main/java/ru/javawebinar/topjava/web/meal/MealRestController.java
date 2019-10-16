@@ -9,11 +9,17 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 
 @Controller
 public class MealRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private LocalDate startDate = LocalDate.MIN;
+    private LocalDate endDate = LocalDate.MAX;
+    private LocalTime startTime = LocalTime.MIN;
+    private LocalTime endTime = LocalTime.MAX;
 
     @Autowired
     private MealService service;
@@ -25,8 +31,21 @@ public class MealRestController {
 
     public Collection<MealTo> getAllWithFilter(int userId, String startDate, String endDate, String startTime, String endTime){
         log.info("getAll with filter of userId {} ", userId);
-
-        return MealsUtil.getTos(service.getAllWithFilter(userId, startDate, endDate, startTime, endTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        if (!startDate.equals(""))
+            this.startDate = LocalDate.parse(startDate);
+        if (!endDate.equals(""))
+            this.endDate = LocalDate.parse(endDate);
+        if (!startTime.equals(""))
+            this.startTime = LocalTime.parse(startTime);
+        if (!endTime.equals(""))
+            this.endTime = LocalTime.parse(endTime);
+        Collection<MealTo> meals = MealsUtil.getTos(service.getAllWithFilter(userId, this.startDate, this.endDate, this.startTime, this.endTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        log.info("filter parametrs {}, {}, {}, {}", this.startDate, this.endDate, this.startTime, this.endTime);
+        this.startDate = LocalDate.MIN;
+        this.endDate = LocalDate.MAX;
+        this.startTime = LocalTime.MIN;
+        this.endTime = LocalTime.MAX;
+        return meals;
     }
 
     public Meal get(int id, int userId) {
