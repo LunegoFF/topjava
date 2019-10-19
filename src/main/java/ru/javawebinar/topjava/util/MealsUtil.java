@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
@@ -8,16 +10,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
-
+    private static final Logger log = LoggerFactory.getLogger(MealsUtil.class);
     public static final List<Meal> MEALS = Arrays.asList(
             new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
             new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
@@ -31,11 +30,15 @@ public class MealsUtil {
         return getFiltered(meals, caloriesPerDay, meal -> true);
     }
 
-    public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, @Nullable LocalTime startTime, @Nullable LocalTime endTime) {
+    public static List<MealTo> getFilteredTos(@Nullable Collection<Meal> meals, int caloriesPerDay, @Nullable LocalTime startTime, @Nullable LocalTime endTime) {
         return getFiltered(meals, caloriesPerDay, meal -> Util.isBetweenInclusive(meal.getTime(), startTime, endTime));
     }
 
-    private static List<MealTo> getFiltered(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
+    private static List<MealTo> getFiltered(@Nullable Collection<Meal> meals, int caloriesPerDay, @Nullable Predicate<Meal> filter) {
+
+        log.info("getFiltered meals {}", meals);
+        if (meals == null)
+            return Collections.emptyList();
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
