@@ -30,15 +30,12 @@ public class MealsUtil {
         return getFiltered(meals, caloriesPerDay, meal -> true);
     }
 
-    public static List<MealTo> getFilteredTos(@Nullable Collection<Meal> meals, int caloriesPerDay, @Nullable LocalTime startTime, @Nullable LocalTime endTime) {
+    public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, @Nullable LocalTime startTime, @Nullable LocalTime endTime) {
         return getFiltered(meals, caloriesPerDay, meal -> Util.isBetweenInclusive(meal.getTime(), startTime, endTime));
     }
 
-    private static List<MealTo> getFiltered(@Nullable Collection<Meal> meals, int caloriesPerDay, @Nullable Predicate<Meal> filter) {
+    private static List<MealTo> getFiltered(Collection<Meal> meals, int caloriesPerDay, @Nullable Predicate<Meal> filter) {
 
-        log.info("getFiltered meals {}", meals);
-        if (meals == null)
-            return Collections.emptyList();
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))

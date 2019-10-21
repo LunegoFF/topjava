@@ -44,7 +44,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(100002, USER_ID);
-        assertMatch(meal, MEAL_100002);
+        assertMatch(meal, MEAL_USER_100002);
     }
 
     @Test(expected = NotFoundException.class)
@@ -60,7 +60,7 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(MEAL_ID, USER_ID);
-        assertMatch(service.getAll(USER_ID), MEAL_100004, MEAL_100003);
+        assertMatch(service.getAll(USER_ID), MEAL_USER_100004, MEAL_USER_100003);
     }
 
     @Test(expected = NotFoundException.class)
@@ -76,20 +76,18 @@ public class MealServiceTest {
     @Test
     public void getBetweenDates() {
         List<Meal> getBetween = service.getBetweenDates(LocalDate.of(2019, Month.OCTOBER, 19), LocalDate.of(2019, Month.OCTOBER, 19), USER_ID);
-        assertMatch(getBetween, MEAL_100004, MEAL_100003, MEAL_100002);
+        assertMatch(getBetween, MEAL_USER_100004, MEAL_USER_100003, MEAL_USER_100002);
     }
 
     @Test
     public void getAll() {
         List<Meal> allUser = service.getAll(USER_ID);
-        List<Meal> allAdmin = service.getAll(ADMIN_ID);
-        assertMatch(allUser, MEAL_100004, MEAL_100003, MEAL_100002);
-        assertMatch(allAdmin, MEAL_100007, MEAL_100006, MEAL_100005);
+        assertMatch(allUser, MEAL_USER_100004, MEAL_USER_100003, MEAL_USER_100002);
     }
 
     @Test
     public void update() {
-        Meal updated = new Meal(MEAL_100002);
+        Meal updated = new Meal(MEAL_USER_100002);
         updated.setDescription("lunch");
         updated.setCalories(330);
         service.update(updated, USER_ID);
@@ -98,7 +96,7 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void updateNotFound() throws Exception{
-        Meal updated = new Meal(MEAL_100002);
+        Meal updated = new Meal(MEAL_USER_100002);
         updated.setDescription("lunch");
         updated.setCalories(330);
         service.update(updated, USER_ID);
@@ -107,7 +105,7 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void updateWithWrongUser() throws Exception{
-        Meal updated = new Meal(MEAL_100002);
+        Meal updated = new Meal(MEAL_USER_100002);
         updated.setId(1);
         updated.setDescription("lunch");
         updated.setCalories(330);
@@ -118,13 +116,9 @@ public class MealServiceTest {
     @Test
     public void create() {
         Meal newMeal = new Meal(null, LocalDateTime.of(2019, Month.OCTOBER, 19, 23, 0), "evening dinner", 1555);
-        Meal createdUser = service.create(newMeal, USER_ID);
+        Meal createdUser = service.create(newMeal, ADMIN_ID);
         newMeal.setId(createdUser.getId());
-        assertMatch(service.getAll(USER_ID), newMeal, MEAL_100004, MEAL_100003, MEAL_100002);
-        newMeal.setId(null);
-        Meal createdAdmin = service.create(newMeal, ADMIN_ID);
-        newMeal.setId(createdAdmin.getId());
-        assertMatch(service.getAll(ADMIN_ID), MEAL_100007, MEAL_100006, MEAL_100005, newMeal);
+        assertMatch(service.getAll(ADMIN_ID), MEAL_ADMIN_100007, MEAL_ADMIN_100006, MEAL_ADMIN_100005, newMeal);
     }
 
     @Test(expected = DataAccessException.class)
