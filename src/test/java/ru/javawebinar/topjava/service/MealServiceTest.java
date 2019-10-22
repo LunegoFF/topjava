@@ -25,7 +25,8 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+        "classpath:spring/spring-db.xml",
+        "classpath:spring/spring-jdbc.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -43,7 +44,7 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(100002, USER_ID);
+        Meal meal = service.get(MEAL_USER_100002.getId(), USER_ID);
         assertMatch(meal, MEAL_USER_100002);
     }
 
@@ -54,7 +55,7 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void getWithWrongUser() throws Exception {
-        service.get(100003, ADMIN_ID);
+        service.get(MEAL_USER_100003.getId(), ADMIN_ID);
     }
 
     @Test
@@ -70,7 +71,7 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void deletedWithWrongUser() throws Exception {
-        service.delete(100002, ADMIN_ID);
+        service.delete(MEAL_USER_100002.getId(), ADMIN_ID);
     }
 
     @Test
@@ -91,7 +92,7 @@ public class MealServiceTest {
         updated.setDescription("lunch");
         updated.setCalories(330);
         service.update(updated, USER_ID);
-        assertMatch(service.get(100002, USER_ID), updated);
+        assertMatch(service.get(MEAL_USER_100002.getId(), USER_ID), updated);
     }
 
     @Test(expected = NotFoundException.class)
@@ -110,7 +111,7 @@ public class MealServiceTest {
         updated.setDescription("lunch");
         updated.setCalories(330);
         service.update(updated, ADMIN_ID);
-        assertMatch(service.get(100002, ADMIN_ID), updated);
+        assertMatch(service.get(MEAL_USER_100002.getId(), ADMIN_ID), updated);
     }
 
     @Test
