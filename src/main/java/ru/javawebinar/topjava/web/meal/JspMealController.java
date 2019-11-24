@@ -1,8 +1,7 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -22,13 +22,13 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 
 @Controller
-//@RequestMapping(value = "/meals")
+@RequestMapping(value = "/meals")
 public class JspMealController {
 
     @Autowired
     private MealService service;
 
-    @GetMapping("/meals")
+    @GetMapping
     public String getMeals(HttpServletRequest request) {
         String action = request.getParameter("action");
         String result = "meals";
@@ -65,7 +65,7 @@ public class JspMealController {
 
 
 
-    @PostMapping("/meals")
+    @PostMapping
     public String setMeal(HttpServletRequest request) {
 
         int userId = SecurityUtil.authUserId();
